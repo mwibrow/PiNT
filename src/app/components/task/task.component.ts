@@ -65,7 +65,7 @@ export class TaskComponent implements OnInit {
   private taskRunning: boolean;
   private trialRunning: boolean;
 
-  private tiles: Array<Tile>;
+  public tiles: Array<Tile>;
   private incomingTileIndex: number;
   private savedTileColor: number;
 

@@ -54,7 +54,7 @@
         <span class="title">Block Size</span>
         <span class="horizontal-filler"></span>
         <div class="number-input-with-buttons">
-          <input type="number" min="1" max="100" [(ngModel)]="settings.blockSize" (change)="changeBlockSize()">
+          <input type="number" min="1" max="100" [(ngModel)]="settings.blockSize" (change)="changeBlockSize(0)">
           <button class="plus" (click)="changeBlockSize(1)">+</button>
           <button class="minus" (click)="changeBlockSize(-1)">-</button>
         </div>
@@ -69,7 +69,7 @@
         <span class="title">Response length</span>
         <span class="horizontal-filler"></span>
         <div class="number-input-with-buttons">
-          <input type="number" min="1" max="10" [(ngModel)]="settings.responseLength" (change)="changeResponseLength()">
+          <input type="number" min="1" max="10" [(ngModel)]="settings.responseLength" (change)="changeResponseLength(0)">
           <button class="plus" (click)="changeResponseLength(1)">+</button>
           <button class="minus" (click)="changeResponseLength(-1)">-</button>
         </div>

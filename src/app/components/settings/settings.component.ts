@@ -19,9 +19,9 @@ const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
 })
 export class SettingsComponent implements OnInit {
 
-  private settings: Settings;
-  private stimuliPathValidationMessage: string ='';
-  private responsesPathValidationMessage: string ='';
+  public settings: Settings;
+  public stimuliPathValidationMessage: string ='';
+  public responsesPathValidationMessage: string ='';
 
   constructor(
       private router: Router,
