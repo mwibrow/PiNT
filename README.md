@@ -1,6 +1,6 @@
 # PiNT 🐄
 
-**PiNT** is (or will be) an [Electron](https://electron.atom.io/)
+**PiNT** is an [Electron](https://electron.atom.io/)
 app for performing picture naming task experiments.
 
 ## Building
