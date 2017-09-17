@@ -10,8 +10,7 @@ const fs = require('fs-extra');
 const klawSync = require('klaw-sync')
 const path = require('path');
 
-const filterWav = item => path.extname(item.path) === '.wav';
-
+const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
 
 @Component({
   selector: 'app-settings',
@@ -100,21 +99,6 @@ export class SettingsComponent implements OnInit {
     if (this.settings.responseLength > 10) this.settings.responseLength = 10;
   }
 
-  changeMaskFrequency(by: number) {
-    if (by) {
-      this.settings.maskFrequency += by;
-    }
-    if (this.settings.maskFrequency < 250) this.settings.maskFrequency = 250;
-    if (this.settings.maskFrequency > 1000) this.settings.maskFrequency = 1000;
-  }
-
-  changeMaskDuration(by: number) {
-    if (by) {
-      this.settings.maskDuration += by;
-    }
-    if (this.settings.maskDuration < 0) this.settings.maskDuration = 0;
-    if (this.settings.maskDuration > 2000) this.settings.maskDuration = 2000;
-  }
 
   validateStimuliPath() {
     if (!this.settings.stimuliPath || this.settings.stimuliPath == notSet) {
@@ -125,9 +109,9 @@ export class SettingsComponent implements OnInit {
       this.stimuliPathValidationMessage = 'Stimuli folder does not exist';
       return;
     }
-    let stimuli = klawSync(this.settings.stimuliPath, { filter: filterWav });
+    let stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
     if (stimuli.length === 0) {
-      this.stimuliPathValidationMessage = 'No WAV files in stimuli folder';
+      this.stimuliPathValidationMessage = 'No Images files in stimuli folder';
       return;
     }
     this.stimuliPathValidationMessage = '';
@@ -159,9 +143,9 @@ const validateSettings = (settings: any)  => {
     if (!fs.pathExistsSync(settings.stimuliPath)) {
       reject('Stimuli folder does not exist')
     }
-    let stimuli = klawSync(settings.stimuliPath, { filter: filterWav });
+    let stimuli = klawSync(settings.stimuliPath, { filter: filterImg });
     if (stimuli.length === 0) {
-      reject('No WAV files in stimuli folder');
+      reject('No image files in stimuli folder');
     }
     if (!settings.responsesPath || settings.responsesPath === notSet) {
       reject('Responses folder not set');

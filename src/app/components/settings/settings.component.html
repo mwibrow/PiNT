@@ -5,22 +5,6 @@
 </div>
 <div md-dialog-content>
   <div class="main">
-    <!-- <div class="setting text">
-      <div class="setting-header">
-        <span class="title">Participant id
-        </span>
-        <span class="horizontal-filler"></span>
-      </div>
-      <div class="setting-description">
-        <span class="description">Participant responses will be saved in a folder based this value</span>
-      </div>
-        <div class="setting-value setting-text">
-      <input type="text" class="setting-value">
-      </div>
-      <div class="setting-validation">
-
-      </div>
-    </div> -->
 
     <div class="setting folder">
       <div class="setting-header">
@@ -77,34 +61,6 @@
       </div>
       <div class="setting-description">
         <span class="description">Number of trials in a block</span>
-      </div>
-    </div>
-    <div class="setting number">
-      <div class="setting-header">
-        <span class="title">Mask frequency</span>
-        <span class="horizontal-filler"></span>
-        <div class="number-input-with-buttons">
-          <input type="number" min="1" max="100" [(ngModel)]="settings.maskFrequency" (change)="changeMaskFrequency()">
-          <button class="plus" (click)="changeMaskFrequency(5)">+</button>
-          <button class="minus" (click)="changeMaskFrequency(-5)">-</button>
-        </div>
-      </div>
-      <div class="setting-description">
-        <span class="description">Frequency of auditory mask in Hz</span>
-      </div>
-    </div>
-    <div class="setting number">
-      <div class="setting-header">
-        <span class="title">Mask duration</span>
-        <span class="horizontal-filler"></span>
-        <div class="number-input-with-buttons">
-          <input type="number" min="10" max="2000" [(ngModel)]="settings.maskDuration" (change)="changeMaskDuration()">
-          <button class="plus" (click)="changeMaskDuration(10)">+</button>
-          <button class="minus" (click)="changeMaskDuration(-10)">-</button>
-        </div>
-      </div>
-      <div class="setting-description">
-        <span class="description">Duration of auditory mask in ms</span>
       </div>
     </div>
 

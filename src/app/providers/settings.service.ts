@@ -16,8 +16,7 @@ export class Settings {
     responsesPath: string = notSet;
 
     blockSize: number = 10;
-    maskFrequency: number = 440;
-    maskDuration: number = 1000;
+
 
     responseLength: number = 5;
 
@@ -67,7 +66,7 @@ export class SettingsService {
 
 
   validateSettings() {
-    
+
       return new Promise((resolve, reject) => {
         if (!this.settings.stimuliPath || this.settings.responsesPath === notSet) {
           reject('Stimuli folder not set');
