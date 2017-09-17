@@ -17,7 +17,7 @@ import { ReadyComponent } from '../ready/ready.component';
 import { BreakComponent } from '../break/break.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
 
-const filterWav = item => path.extname(item.path) === '.wav';
+const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
 
 const COLOR_COUNT: number = 16;
 const DIRECTIONS: Array<string> =  ['top', 'bottom', 'left', 'right'];
@@ -30,7 +30,8 @@ class Tile {
     public color: number,
     public stack: string,
     public direction: string,
-    public style: string) {};
+    public style: string,
+    public imageSrc: string) {};
 }
 
 
@@ -52,7 +53,6 @@ export class TaskComponent implements OnInit {
   private participantFolder: string;
   private now: Date;
 
-  private player: AudioPlayer;
   private recorder: AudioRecorder;
 
   private keyboardBuffer: Array<string>;
@@ -69,7 +69,7 @@ export class TaskComponent implements OnInit {
   private incomingTileIndex: number;
   private savedTileColor: number;
 
-
+  private imageSrc: string;
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -77,8 +77,6 @@ export class TaskComponent implements OnInit {
       public settingsService: SettingsService) {
 
     this.audio.initialise();
-    this.player = audio.player;
-    this.player.initialise();
     this.recorder = audio.recorder;
     this.recorder.initialise();
 
@@ -95,28 +93,31 @@ export class TaskComponent implements OnInit {
     this.abort = false;
 
     this.tiles = new Array<Tile>();
-    this.tiles.push(new Tile(0, 'back', 'top', 'out'));
-    this.tiles.push(new Tile(0, 'front', 'left', 'in'));
+    this.tiles.push(new Tile(0, 'back', 'top', 'out', null));
+    this.tiles.push(new Tile(0, 'front', 'left', 'in', null));
     this.incomingTileIndex = 0;
     this.savedTileColor = null;
+
+    this.imageSrc = null;
   }
 
 
   private loadStimuli() {
     return new Promise((resolve, reject) => {
       console.log(`Loading wav files from ${this.settings.stimuliPath}`);
-      this.stimuli = klawSync(this.settings.stimuliPath, { filter: filterWav });
+      this.stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
       if (this.stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
             title: 'Ooops!',
-            content: 'There were no audio files in the stimuli folder'
+            content: 'There were no image files in the stimuli folder'
           }
         },
         () => {
             this.router.navigateByUrl('');
           });
       }
+      console.log(`Loaded ${this.stimuli.length} paths.`);
       resolve();
     });
   }
@@ -138,118 +139,96 @@ export class TaskComponent implements OnInit {
   }
 
   private runTrial() {
-    this.recorder.record();
     this.startTrial()
-      .then(this.loadStimulus)
-      .then(this.playStimulus)
-      .then(this.playTone)
-      .then(this.recordResponse)
-      .then(this.saveResponse)
-      .then(this.endTrial);
+      .then(() => this.loadStimulus())
+      .then(() => this.recordResponse())
+      .then(() => this.saveResponse())
+      .then(() => this.endTrial());
   }
 
-  private startTrial(self?: TaskComponent) {
-    self = self || this
-    this.updateTiles();
-    self.trialRunning = true;
+  private startTrial() {
+    this.trialRunning = true;
     return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(self), 2000)
+      this.recorder.record();
+      resolve();
     });
   }
-  private loadStimulus(self?: TaskComponent)  {
+
+  private loadStimulus()  {
     let i: number;
-    self = self || this;
     return new Promise((resolve, reject) => {
-      i = self.trial % self.stimuli.length;
-      self.player.loadWav(self.stimuli[i].path).then(() => resolve(self))
+      i = this.trial % this.stimuli.length;
+      this.updateTiles(this.stimuli[i].path);
+      setTimeout(() => resolve(), 2000);
     });
   }
 
-  private playStimulus(self?: TaskComponent)  {
-    self = self || this;
-    return new Promise((resolve, reject) => {
-      return self.player.play().then(() => resolve(self));
-    });
-  }
 
-  private playTone(self?: TaskComponent)  {
-    self = self || this;
+  private recordResponse()  {
     return new Promise((resolve, reject) => {
-      self.player.playTone(440, 1).then(() => resolve(self));
-    });
-  }
-
-  private recordResponse(self?: TaskComponent)  {
-    self = self || this;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(self), self.settings.responseLength * 1000);
+      setTimeout(() => resolve(), this.settings.responseLength * 1000);
     })
   }
 
-  private saveResponse(self?: TaskComponent) {
-    self = self || this;
+  private saveResponse() {
     return new Promise((resolve, reject) => {
-      self.recorder.stop().then(() => {
-        let wavPath: string = self.getResponseFile();
+      this.recorder.stop().then(() => {
+        let wavPath: string = this.getResponseFile();
         console.log(`Saving wav to ${wavPath}`);
-        self.recorder.saveWav(wavPath).then(() => resolve(self));
+        this.recorder.saveWav(wavPath).then(() => resolve());
       });
     });
   }
 
-  private getResponseFile(self?: TaskComponent) {
+  private getResponseFile() {
     let i: number;
-    self = self || this;
-    i = self.trial % self.stimuli.length;
+    i = this.trial % this.stimuli.length;
     return path.normalize(path.join(
-      self.settings.responsesPath, self.participantFolder,
-      `${sprintf.sprintf('%03d', self.trial + 1)}-${path.posix.basename(self.stimuli[i].path)}`
+      this.settings.responsesPath, this.participantFolder,
+      `${sprintf.sprintf('%03d', this.trial + 1)}-${path.posix.basename(this.stimuli[i].path, path.extname(this.stimuli[i].path))}.wav`
     ));
   }
 
-  private endTrial(self?: TaskComponent) {
-    self = self || this;
-    self.trial ++;
-    if (self.abort) {
+  private endTrial() {
+    this.trial ++;
+    if (this.abort) {
       return;
     }
-    if (self.trial >= self.stimuli.length) {
-      self.updateTiles(0);
-      setTimeout(() => self.endTask(), 2000);
+    if (this.trial >= this.stimuli.length) {
+      this.updateTiles(null);
+      setTimeout(() => this.endTask(), 2000);
     } else {
-      if (self.trial % self.settings.blockSize === 0) {
-        self.updateTiles(0);
-        setTimeout(() => self.break(), 1500);
+      if (this.trial % this.settings.blockSize === 0) {
+        this.updateTiles(null);
+        setTimeout(() => this.break(), 1500);
       } else {
-        self.runTrial();
+        this.runTrial();
       }
     }
   }
 
-  private updateTiles(color?: number) {
+  private updateTiles(imageSrc?: string) {
     let newColor: number;
+    let i = this.trial % this.stimuli.length;
     let outgoingTileIndex: number = this.incomingTileIndex;
     this.incomingTileIndex = 1 - this.incomingTileIndex;
 
-    if (Number.isInteger(color)) {
-      this.savedTileColor = this.tiles[outgoingTileIndex].color;
-      this.tiles[this.incomingTileIndex].color = color;
-    } else {
-      if (Number.isInteger(this.savedTileColor)) {
-        newColor = this.savedTileColor;
-        this.savedTileColor = null;
-      } else {
-        newColor = this.tiles[outgoingTileIndex].color;
-      }
+    if (imageSrc) {
+      newColor = this.savedTileColor ? this.savedTileColor : this.tiles[outgoingTileIndex].color;
       this.tiles[this.incomingTileIndex].color = (newColor % COLOR_COUNT) + 1;
+      this.savedTileColor = null;
+    } else {
+      this.savedTileColor = this.tiles[outgoingTileIndex].color;
+      this.tiles[this.incomingTileIndex].color = 0
     }
-
+    this.tiles[this.incomingTileIndex].imageSrc = imageSrc;
+    console.log(imageSrc)
     this.tiles[this.incomingTileIndex].style = STYLE_IN;
     this.tiles[outgoingTileIndex].style = STYLE_OUT;
     let directions = _.sampleSize(DIRECTIONS, 2);
     this.tiles[this.incomingTileIndex].direction = directions[0];
     this.tiles[outgoingTileIndex].direction = directions[1];
-
+    setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
   }
 
   private endTask() {
@@ -294,7 +273,6 @@ export class TaskComponent implements OnInit {
       this.settings = this.settingsService.settings;
       this.loadStimuli().then(() => {
         setTimeout(() => {
-          this.updateTiles(0);
           this.openDialog('start', ReadyComponent,  {
             disableClose: true,
           },

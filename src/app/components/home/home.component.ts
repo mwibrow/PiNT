@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
         this.dialog.open(ErrorComponent,  {
           disableClose: true,
           data: {
-            title: 'Opps!',
+            title: 'Oops!',
             content: message
           }
         })

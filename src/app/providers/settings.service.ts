@@ -5,7 +5,7 @@ const storage = require('electron-json-storage');
 const klawSync = require('klaw-sync')
 const path = require('path');
 
-const filterWav = item => path.extname(item.path) === '.wav';
+const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
 
 export const notSet: string = 'Not set!';
 
@@ -74,9 +74,9 @@ export class SettingsService {
         if (!fs.pathExistsSync(this.settings.stimuliPath)) {
           reject('Stimuli folder does not exist')
         }
-        let stimuli = klawSync(this.settings.stimuliPath, { filter: filterWav });
+        let stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
         if (stimuli.length === 0) {
-          reject('No WAV files in stimuli folder');
+          reject('No image files in stimuli folder');
         }
         if (!this.settings.responsesPath || this.settings.responsesPath === notSet) {
           reject('Responses folder not set');
