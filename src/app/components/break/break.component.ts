@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MdDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-break',
@@ -12,18 +13,33 @@ import { MdDialogRef } from '@angular/material';
 })
 export class BreakComponent implements OnInit {
 
-  constructor(private dialogRef: MdDialogRef<BreakComponent>) { }
+  private keyboardBuffer: Array<string>;
+  constructor(private dialogRef: MdDialogRef<BreakComponent>, private router: Router) { 
+    this.keyboardBuffer = new Array<string>();
+
+  }
 
   ngOnInit() {
   }
 
   handleKeyboardEvents(event: KeyboardEvent) {
+    let key = event.which || event.keyCode;
     switch (event.type) {
       case 'keydown':
-          if (event.keyCode === 32) {
+        if (event.keyCode === 32) {
+          return this.dialogRef.close();
+        }
+        this.keyboardBuffer.push(event.key);
+
+        if (this.keyboardBuffer.join('|') === 'Control|Shift|Escape') { 
             this.dialogRef.close();
-          }
+            this.router.navigateByUrl('');
+        }
+        break;
+      case 'keyup':
+          this.keyboardBuffer = [];
       default:
     }
+    return false;
   }
 }
