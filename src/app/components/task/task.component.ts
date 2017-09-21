@@ -3,12 +3,11 @@ import { AudioService, AudioPlayer, AudioRecorder } from '../../providers/audio.
 import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
-const sprintf = require ('sprintf-js');
-
-const storage = require('electron-json-storage');
 const fs = require('fs-extra');
-const klawSync = require('klaw-sync')
+const klawSync = require('klaw-sync');
 const path = require('path');
+const sprintf = require ('sprintf-js');
+const storage = require('electron-json-storage');
 var _ = require('lodash');
 
 import { ErrorComponent } from '../error/error.component';
@@ -104,7 +103,7 @@ export class TaskComponent implements OnInit {
 
   private loadStimuli() {
     return new Promise((resolve, reject) => {
-      console.log(`Loading wav files from ${this.settings.stimuliPath}`);
+      console.log(`Loading image file paths from ${this.settings.stimuliPath}`);
       this.stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
       if (this.stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
@@ -221,14 +220,19 @@ export class TaskComponent implements OnInit {
       this.savedTileColor = this.tiles[outgoingTileIndex].color;
       this.tiles[this.incomingTileIndex].color = 0
     }
-    this.tiles[this.incomingTileIndex].imageSrc = imageSrc;
-    console.log(imageSrc)
-    this.tiles[this.incomingTileIndex].style = STYLE_IN;
-    this.tiles[outgoingTileIndex].style = STYLE_OUT;
-    let directions = _.sampleSize(DIRECTIONS, 2);
-    this.tiles[this.incomingTileIndex].direction = directions[0];
-    this.tiles[outgoingTileIndex].direction = directions[1];
-    setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
+    fs.readFile(imageSrc, (err, buffer) =>  {
+      this.tiles[this.incomingTileIndex].imageSrc = buffer.toString('base64')
+      this.tiles[this.incomingTileIndex].style = STYLE_IN;
+      this.tiles[outgoingTileIndex].style = STYLE_OUT;
+      let directions = _.sampleSize(DIRECTIONS, 2);
+      this.tiles[this.incomingTileIndex].direction = directions[0];
+      this.tiles[outgoingTileIndex].direction = directions[1];
+      setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
+    });
+  }
+
+  public tileImageSrc(i: number) {
+    return `data:image/png;base64,${this.tiles[i].imageSrc}`
   }
 
   private endTask() {
@@ -255,7 +259,7 @@ export class TaskComponent implements OnInit {
       case 'keydown':
         this.keyboardBuffer.push(event.key);
 
-        if (this.keyboardBuffer.join('|') === 'Control|Shift|Escape') {
+        if (this.keyboardBuffer.join('|') === 'Control|Alt|Escape') {
             this.abort = true;
             this.closeDialog();
             this.router.navigateByUrl('');
