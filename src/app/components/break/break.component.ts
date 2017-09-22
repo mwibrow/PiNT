@@ -31,7 +31,7 @@ export class BreakComponent implements OnInit {
         }
         this.keyboardBuffer.push(event.key);
 
-        if (this.keyboardBuffer.join('|') === 'Control|Shift|Escape') { 
+        if (this.keyboardBuffer.join('|') === 'Control|Alt|Escape') { 
             this.dialogRef.close();
             this.router.navigateByUrl('');
         }

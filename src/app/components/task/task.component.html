@@ -1,14 +1,14 @@
 
 <div class="page">
     <div class="tiles">
-        <div class="tile tile-{{tiles[0].stack}} color-light-{{tiles[0].color}} {{tiles[0].style}}-{{tiles[0].direction}}">
+        <div *ngIf="tiles[0].imageSrc" class="tile tile-{{tiles[0].stack}} color-light-{{tiles[0].color}} {{tiles[0].style}}-{{tiles[0].direction}}">
             <div class="image">
-                <img *ngIf="tiles[0].imageSrc" [src]="tileImageSrc(0)"/>
+                <img [src]="tileImageSrc(0)"/>
             </div>
         </div>
-        <div class="tile tile-{{tiles[1].stack}} color-light-{{tiles[1].color}} {{tiles[1].style}}-{{tiles[1].direction}}">
+        <div  *ngIf="tiles[1].imageSrc" class="tile tile-{{tiles[1].stack}} color-light-{{tiles[1].color}} {{tiles[1].style}}-{{tiles[1].direction}}">
             <div class="image">
-                <img *ngIf="tiles[1].imageSrc" [src]="tileImageSrc(1)"/>
+                <img [src]="tileImageSrc(1)"/>
             </div>
         </div>
     </div>

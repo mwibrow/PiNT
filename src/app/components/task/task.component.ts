@@ -181,10 +181,12 @@ export class TaskComponent implements OnInit {
 
   private getResponseFile() {
     let i: number;
+    let isWindows: boolean = path.sep === '//';
+    let pathApi = isWindows ? path.win32 : path;
     i = this.trial % this.stimuli.length;
     return path.normalize(path.join(
       this.settings.responsesPath, this.participantFolder,
-      `${sprintf.sprintf('%03d', this.trial + 1)}-${path.posix.basename(this.stimuli[i].path, path.extname(this.stimuli[i].path))}.wav`
+      `${sprintf.sprintf('%03d', this.trial + 1)}-${pathApi.basename(this.stimuli[i].path, pathApi.extname(this.stimuli[i].path))}.wav`
     ));
   }
 
@@ -220,15 +222,25 @@ export class TaskComponent implements OnInit {
       this.savedTileColor = this.tiles[outgoingTileIndex].color;
       this.tiles[this.incomingTileIndex].color = 0
     }
-    fs.readFile(imageSrc, (err, buffer) =>  {
-      this.tiles[this.incomingTileIndex].imageSrc = buffer.toString('base64')
+    if (imageSrc) {
+      fs.readFile(imageSrc, (err, buffer) =>  {
+        this.tiles[this.incomingTileIndex].imageSrc = buffer.toString('base64')
+        this.tiles[this.incomingTileIndex].style = STYLE_IN;
+        this.tiles[outgoingTileIndex].style = STYLE_OUT;
+        let directions = _.sampleSize(DIRECTIONS, 2);
+        this.tiles[this.incomingTileIndex].direction = directions[0];
+        this.tiles[outgoingTileIndex].direction = directions[1];
+        setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
+      });
+    } else {
+      this.tiles[this.incomingTileIndex].imageSrc = null;
       this.tiles[this.incomingTileIndex].style = STYLE_IN;
       this.tiles[outgoingTileIndex].style = STYLE_OUT;
       let directions = _.sampleSize(DIRECTIONS, 2);
       this.tiles[this.incomingTileIndex].direction = directions[0];
       this.tiles[outgoingTileIndex].direction = directions[1];
       setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
-    });
+    }
   }
 
   public tileImageSrc(i: number) {
