@@ -2,17 +2,25 @@
 <div class="page">
     <div class="tiles">
         <div *ngIf="tiles[0].imageSrc" class="tile tile-{{tiles[0].stack}} color-light-{{tiles[0].color}} {{tiles[0].style}}-{{tiles[0].direction}}">
-            <div class="image">
-                <img [src]="tileImageSrc(0)"/>
+            <div class="tile-inner">
+                <div class="image">
+                    <img [src]="tileImageSrc(0)"/>
+                </div>
+                <div class="visualiser">
+                    <div class="circle color-dark-{{tiles[0].color}}" [ngStyle]="tiles[0].visualiserStyle"></div>
+                </div>
             </div>
         </div>
         <div  *ngIf="tiles[1].imageSrc" class="tile tile-{{tiles[1].stack}} color-light-{{tiles[1].color}} {{tiles[1].style}}-{{tiles[1].direction}}">
-            <div class="image">
-                <img [src]="tileImageSrc(1)"/>
+            <div class="tile-inner">
+                <div class="image">
+                    <img [src]="tileImageSrc(1)"/>
+                </div>
+            <div class="visualiser">
+                    <div class="circle color-dark-{{tiles[1].color}}" [ngStyle]="tiles[1].visualiserStyle"></div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="visualiser">
-        <app-visualiser></app-visualiser>
-    </div>
+
 </div>

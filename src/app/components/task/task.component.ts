@@ -30,7 +30,8 @@ class Tile {
     public stack: string,
     public direction: string,
     public style: string,
-    public imageSrc: string) {};
+    public imageSrc: string,
+    public visualiserStyle: any) {};
 }
 
 
@@ -73,6 +74,8 @@ export class TaskComponent implements OnInit {
 
   private imageSrc: string;
 
+  private visualiser: Visualiser;
+  private style: any = {};
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -82,6 +85,9 @@ export class TaskComponent implements OnInit {
     this.audio.initialise();
     this.recorder = audio.recorder;
     this.recorder.initialise();
+
+    this.visualiser = new Visualiser(this.audio.getContext());
+    this.recorder.addNode(this.visualiser.analyser);
 
     this.keyboardBuffer = [];
     this.enableSpaceKey = false;
@@ -97,8 +103,8 @@ export class TaskComponent implements OnInit {
     this.abort = false;
 
     this.tiles = new Array<Tile>();
-    this.tiles.push(new Tile(0, 'back', 'top', 'out', null));
-    this.tiles.push(new Tile(0, 'front', 'left', 'in', null));
+    this.tiles.push(new Tile(0, 'back', 'top', 'out', null, {visibility: 'hidden'}));
+    this.tiles.push(new Tile(0, 'front', 'left', 'in', null, {visibility: 'hidden'}));
     this.incomingTileIndex = 0;
     this.savedTileColor = null;
 
@@ -171,6 +177,12 @@ export class TaskComponent implements OnInit {
       this.updateTiles(this.stimuli[i].path);
       setTimeout(() => {
         this.enableSpaceKey = true;
+        this.visualiser.onvisualise = (data) => {
+          this.tiles[this.incomingTileIndex].visualiserStyle = {
+            width: `${(data[0] / 255) ** 2 * 255}px`
+          }
+        }
+        this.visualiser.start()
         resolve();
       }, 2000);
     });
@@ -197,6 +209,9 @@ export class TaskComponent implements OnInit {
 
   private saveResponse() {
     return new Promise((resolve, reject) => {
+      this.visualiser.stop()
+      this.visualiser.onvisualise = null;
+      this.tiles[this.incomingTileIndex].visualiserStyle = {width: '0px'}
       this.recorder.stop().then(() => {
         let wavPath: string = this.getResponseFile();
         console.log(`Saving wav to ${wavPath}`);
@@ -394,6 +409,6 @@ class Visualiser {
   private analyse() {
     this.analyser.getByteFrequencyData(this.data);
     this.onvisualise && this.onvisualise(this.data);
-    requestAnimationFrame(() => this.analyse())
+    this.visualise && requestAnimationFrame(() => this.analyse())
   }
 }
