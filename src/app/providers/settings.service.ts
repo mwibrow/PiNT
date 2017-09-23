@@ -16,7 +16,7 @@ export class Settings {
     responsesPath: string = notSet;
     blockSize: number = 10;
     responseLength: number = 5;
-
+    repetitions: number = 3;
     escapeCombo: string = 'Escape|Escape|Escape';
 }
 

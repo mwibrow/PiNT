@@ -99,6 +99,14 @@ export class SettingsComponent implements OnInit {
     if (this.settings.responseLength > 10) this.settings.responseLength = 10;
   }
 
+  changeRepetitions(by: number) {
+    if (by) {
+      this.settings.repetitions += by;
+    }
+    if (this.settings.repetitions < 1) this.settings.repetitions = 1;
+    if (this.settings.repetitions > 10) this.settings.repetitions = 10;
+  }
+
 
   validateStimuliPath() {
     if (!this.settings.stimuliPath || this.settings.stimuliPath == notSet) {

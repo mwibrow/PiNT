@@ -72,7 +72,6 @@ export class TaskComponent implements OnInit {
   private savedTileColor: number;
 
   private imageSrc: string;
-  private visualiser: Visualiser;
 
   constructor(
       private router: Router,
@@ -83,8 +82,7 @@ export class TaskComponent implements OnInit {
     this.audio.initialise();
     this.recorder = audio.recorder;
     this.recorder.initialise();
-    this.visualiser = new Visualiser(this.audio.getContext());
-    this.recorder.addNode(this.visualiser.analyser)
+
     this.keyboardBuffer = [];
     this.enableSpaceKey = false;
     this.onSpaceKey = null;
@@ -126,6 +124,10 @@ export class TaskComponent implements OnInit {
           });
       }
       console.log(`Loaded ${this.stimuli.length} paths.`);
+      if (this.settings.repetitions > 1) {
+        this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.stimuli));
+      }
+      console.log(`Total stimuli (including repetitions): ${this.stimuli.length}`)
       resolve();
     });
   }
@@ -158,7 +160,6 @@ export class TaskComponent implements OnInit {
     this.trialRunning = true;
     return new Promise((resolve, reject) => {
       this.recorder.record();
-      this.visualiser.start();
       resolve();
     });
   }
