@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,8 +14,13 @@ import { Router } from '@angular/router';
 export class BreakComponent implements OnInit {
 
   private keyboardBuffer: Array<string>;
-  constructor(private dialogRef: MdDialogRef<BreakComponent>, private router: Router) { 
+  private escapeCombo: string = 'Escape';
+  constructor(@Inject(MD_DIALOG_DATA) data: any,
+      private dialogRef: MdDialogRef<BreakComponent>,
+      private router: Router) {
+
     this.keyboardBuffer = new Array<string>();
+    this.escapeCombo = data && data.escapeCombo ? data.escapeCombo : this.escapeCombo;
 
   }
 
@@ -30,14 +35,12 @@ export class BreakComponent implements OnInit {
           return this.dialogRef.close();
         }
         this.keyboardBuffer.push(event.key);
-
-        if (this.keyboardBuffer.join('|') === 'Control|Alt|Escape') { 
+        setTimeout(() => this.keyboardBuffer = [], 1000)
+        if (this.keyboardBuffer.join('|') === this.escapeCombo) {
             this.dialogRef.close();
             this.router.navigateByUrl('');
         }
         break;
-      case 'keyup':
-          this.keyboardBuffer = [];
       default:
     }
     return false;

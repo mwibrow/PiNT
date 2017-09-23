@@ -14,12 +14,10 @@ export class Settings {
     participantId: string = notSet;
     stimuliPath: string = notSet;
     responsesPath: string = notSet;
-
     blockSize: number = 10;
-
-
     responseLength: number = 5;
 
+    escapeCombo: string = 'Escape|Escape|Escape';
 }
 
 @Injectable()

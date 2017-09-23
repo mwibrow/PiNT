@@ -55,12 +55,15 @@ export class TaskComponent implements OnInit {
   private recorder: AudioRecorder;
 
   private keyboardBuffer: Array<string>;
+  private enableSpaceKey: boolean;
+  private onSpaceKey: any;
+
+  private escapeCombo: string;
 
   private dialogRefs: any;
 
   private finish: boolean;
   private abort: boolean;
-
   private taskRunning: boolean;
   private trialRunning: boolean;
 
@@ -69,6 +72,7 @@ export class TaskComponent implements OnInit {
   private savedTileColor: number;
 
   private imageSrc: string;
+
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -80,7 +84,8 @@ export class TaskComponent implements OnInit {
     this.recorder.initialise();
 
     this.keyboardBuffer = [];
-
+    this.enableSpaceKey = false;
+    this.onSpaceKey = null;
 
     this.stimuli = new Array<any>();
     this.settings = settingsService.settings;
@@ -98,6 +103,8 @@ export class TaskComponent implements OnInit {
     this.savedTileColor = null;
 
     this.imageSrc = null;
+
+    this.escapeCombo = this.settings.escapeCombo;
   }
 
 
@@ -158,16 +165,31 @@ export class TaskComponent implements OnInit {
     return new Promise((resolve, reject) => {
       i = this.trial % this.stimuli.length;
       this.updateTiles(this.stimuli[i].path);
-      setTimeout(() => resolve(), 2000);
+      setTimeout(() => {
+        this.enableSpaceKey = true;
+        resolve();
+      }, 2000);
     });
   }
 
-
   private recordResponse()  {
     return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(), this.settings.responseLength * 1000);
+      let timeoutId = setTimeout(() => {
+        this.onSpaceKey = null;
+        this.enableSpaceKey = false;
+        resolve()
+      }, this.settings.responseLength * 1000);
+      this.onSpaceKey = () => {
+        clearTimeout(timeoutId);
+        if (this.onSpaceKey) {
+          this.enableSpaceKey = false;
+          this.onSpaceKey = null;
+          resolve();
+        }
+      };
     })
   }
+
 
   private saveResponse() {
     return new Promise((resolve, reject) => {
@@ -258,7 +280,10 @@ export class TaskComponent implements OnInit {
 
   private break() {
     this.openDialog('break', BreakComponent,  {
-      disableClose: true
+      disableClose: true,
+      data: {
+        escapeCombo: this.escapeCombo
+      }
     },
     () => {
       this.runTrial();
@@ -269,16 +294,17 @@ export class TaskComponent implements OnInit {
     let key = event.which || event.keyCode;
     switch (event.type) {
       case 'keydown':
+        if (event.keyCode === 32 && this.enableSpaceKey && this.onSpaceKey) {
+          this.onSpaceKey();
+        }
         this.keyboardBuffer.push(event.key);
-
-        if (this.keyboardBuffer.join('|') === 'Control|Alt|Escape') {
+        setTimeout(() => this.keyboardBuffer = [], 1000)
+        if (this.keyboardBuffer.join('|') === this.escapeCombo) {
             this.abort = true;
             this.closeDialog();
-            this.router.navigateByUrl('');
+            return this.router.navigateByUrl('');
         }
         break;
-      case 'keyup':
-          this.keyboardBuffer = [];
       default:
     }
     return false;
