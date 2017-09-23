@@ -24,6 +24,9 @@ export class AudioService {
     this.recorder.initialise();
   }
 
+  getContext() {
+    return this.context;
+  }
 }
 
 

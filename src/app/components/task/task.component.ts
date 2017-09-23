@@ -72,6 +72,7 @@ export class TaskComponent implements OnInit {
   private savedTileColor: number;
 
   private imageSrc: string;
+  private visualiser: Visualiser;
 
   constructor(
       private router: Router,
@@ -82,7 +83,8 @@ export class TaskComponent implements OnInit {
     this.audio.initialise();
     this.recorder = audio.recorder;
     this.recorder.initialise();
-
+    this.visualiser = new Visualiser(this.audio.getContext());
+    this.recorder.addNode(this.visualiser.analyser)
     this.keyboardBuffer = [];
     this.enableSpaceKey = false;
     this.onSpaceKey = null;
@@ -156,6 +158,7 @@ export class TaskComponent implements OnInit {
     this.trialRunning = true;
     return new Promise((resolve, reject) => {
       this.recorder.record();
+      this.visualiser.start();
       resolve();
     });
   }
@@ -358,4 +361,38 @@ export class TaskComponent implements OnInit {
     }
   }
 
+}
+
+class Visualiser {
+
+  public analyser: AnalyserNode;
+  public data: Uint8Array;
+  private visualise: boolean;
+  public onvisualise: any;
+
+  constructor(public audioContext: AudioContext) {
+    this.analyser = audioContext.createAnalyser();
+    this.analyser.fftSize = 512;
+    this.data = new Uint8Array(512);
+    this.visualise = true;
+    this.onvisualise = null;
+  }
+
+  initialise() {
+
+  }
+  public start() {
+    this.visualise = true;
+    requestAnimationFrame(() => this.analyse());
+  }
+
+  public stop() {
+    this.visualise = false;
+  }
+
+  private analyse() {
+    this.analyser.getByteFrequencyData(this.data);
+    this.onvisualise && this.onvisualise(this.data);
+    requestAnimationFrame(() => this.analyse())
+  }
 }

@@ -34,6 +34,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { BreakComponent } from './components/break/break.component';
 import { FinishComponent } from './components/finish/finish.component';
 import { ReadyComponent } from './components/ready/ready.component';
+import { VisualiserComponent } from './components/visualiser/visualiser.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ReadyComponent } from './components/ready/ready.component';
     ErrorComponent,
     BreakComponent,
     FinishComponent,
-    ReadyComponent
+    ReadyComponent,
+    VisualiserComponent
   ],
   entryComponents: [
     ErrorComponent,
