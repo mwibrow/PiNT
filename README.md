@@ -32,7 +32,7 @@ execute:
 
 ## Using PiNT
 
-Use the settings to sey the source folder for the pictures
+Use the settings to set the source folder for the pictures
 and the destination folder for the recordings on the Settings.
 Recordings will be saved
 inside timestamped folders inside the destination folder.
