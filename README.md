@@ -2,7 +2,9 @@
 # PiNT
 
 **PiNT** is an [Electron](https://electron.atom.io/)
-app for performing picture naming task experiments.
+app for performing picture naming tasks.
+Its somewhat over-colourful appearance reflects its original
+development for use with children.
 
 ## Building
 
@@ -22,7 +24,7 @@ execute:
     ```
     npm run build
     ```
-5. After an even longer while *PiNT* can be run using:
+5. After an even longer while **PiNT** can be run using:
 
     ```
     electron ./dist
@@ -36,7 +38,7 @@ Recordings will be saved
 inside timestamped folders inside the destination folder.
 
 In general, it is advisable set up the microphone prior to
-running *PiNT*.
+running **PiNT**.
 If a microphone is unavailable then it will (or at least should)
 not be possible to run the task and an appropriate warning
 will be displayed.
