@@ -42,6 +42,10 @@ running **PiNT**.
 If a microphone is unavailable then it will (or at least should)
 not be possible to run the task and an appropriate warning
 will be displayed.
+The `Audio` button on the home page can be used to monitor
+the microphone while setting the system volume.
+Note that this feature does not seem to work consistently
+(or at all) on Windows.
 
 Pressing `Escape` three times rapidly while the
 picture naming task is running should return the app
