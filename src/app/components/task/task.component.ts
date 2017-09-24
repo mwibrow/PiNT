@@ -143,8 +143,13 @@ export class TaskComponent implements OnInit {
 
   private runTask() {
     let now = new Date();
-    this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d',
-      now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes());
+    this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d-%02d',
+      now.getFullYear(),
+      now.getMonth() + 1,
+      now.getDate(),
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds());
     let participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
     fs.mkdirpSync(participantPath,
       (err) => {
@@ -203,7 +208,7 @@ export class TaskComponent implements OnInit {
         if (this.onSpaceKey) {
           this.enableSpaceKey = false;
           this.onSpaceKey = null;
-          resolve();
+          setTimeout(() => resolve(), 1000);
         }
       };
     })

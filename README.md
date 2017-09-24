@@ -6,23 +6,42 @@ app for performing picture naming task experiments.
 
 ## Building
 
-To get going quickly, install the latest version of [node](https://nodejs.org/en/)
+The following instructions apply to all platforms (Linux, MacOS and Windows):
+
+1. install the latest version of [node](https://nodejs.org/en/)
 for the relevant platform.
 
-Change to the project root and execute:
+2. Clone the repository or download the zip of the master branch
+
+3. Change to the project root and execute:
 
     npm install
 
 After a while (and possibly a bunch of warnings depending on the platform)
 execute:
 
-    npm run electron:dev
+    npm run build
+
+After an even longer while *PiNT* can be run using:
+
+    electron ./dist
 
 ## Using PiNT
 
-Set the source folder for the pictures and the destination folder
-for the recordings on the Settings. Recordings will be saved
+Use the settings to sey the source folder for the pictures
+and the destination folder for the recordings on the Settings.
+Recordings will be saved
 inside timestamped folders inside the destination folder.
+
+In general, it is advisable set up the microphone prior to
+running *PiNT*.
+If a microphone is unavailable then it will (or at least should)
+not be possible to run the task and an appropriate warning
+will be displayed.
+
+Pressing `Escape` three times rapidly while the
+picture naming task is running should return the app
+to the home screen.
 
 ## Acknowledgements
 
