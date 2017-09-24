@@ -14,17 +14,19 @@ for the relevant platform.
 2. Clone the repository or download the zip of the master branch
 
 3. Change to the project root and execute:
-
+    ```
     npm install
-
-After a while (and possibly a bunch of warnings depending on the platform)
+    ```
+4. After a while (and possibly a bunch of warnings depending on the platform)
 execute:
-
+    ```
     npm run build
+    ```
+5. After an even longer while *PiNT* can be run using:
 
-After an even longer while *PiNT* can be run using:
-
+    ```
     electron ./dist
+    ```
 
 ## Using PiNT
 
