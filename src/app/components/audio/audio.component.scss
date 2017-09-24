@@ -1,0 +1,36 @@
+@import '../settings/settings.component.scss';
+
+
+
+.main {
+    width: 35vw !important;
+}
+
+.audio-meter {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 0.5rem;
+    background-color: rgba(color($md-palette, md-blue-grey), 0.25);
+    padding: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.audio-meter-value {
+    width: 0%;
+    height: 0.5rem;
+    background-color: color($md-palette, md-light-green);
+    border-radius: 0.5rem;
+    margin: 0;
+}
+
+.error-message {
+    font-weight: bold;
+    color: color($md-palette, md-red);
+    font-size: 0.75rem;
+}
+
+.disabled-true {
+    opacity: 0.25 !important;
+}
