@@ -69,8 +69,10 @@
   padding: 1ex;
 
   h1 {
-    margin: auto;
-    font-size: 800%;
+    margin-top: 0;
+    font-size: 750%;
+    margin-bottom: 0;
+    line-height: 1em;
   }
 
   h1 span {
@@ -78,6 +80,7 @@
   }
 
   h2 {
+    margin-top: 0;
     font-size: 200%;
     color: $app-color;
   }
