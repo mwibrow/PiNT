@@ -1,4 +1,5 @@
-# PiNT 🐄
+![PiNT logo](./logo-pint.png)
+# PiNT
 
 **PiNT** is an [Electron](https://electron.atom.io/)
 app for performing picture naming task experiments.
