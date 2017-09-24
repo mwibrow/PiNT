@@ -272,6 +272,10 @@ export class AudioRecorder extends AudioEventHandler {
     this.nodes.push(node);
   }
 
+  clearNodes() {
+    this.nodes = new Array<AudioNode>();
+  }
+
   monitorAudio() {
     this.monitor = true;
     this.recordInit();
@@ -299,6 +303,7 @@ export class AudioRecorder extends AudioEventHandler {
     for (i = 0; i < this.nodes.length; i ++) {
       this.streamSource.connect(this.nodes[i]);
     }
+    console.log(this.nodes)
     this.emit('start');
   }
 

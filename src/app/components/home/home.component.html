@@ -17,16 +17,25 @@
   </h2>
 
   <md-list>
+
     <md-list-item>
-      <button md-button (click)="openSettings()">
-        Settings
-      </button>
-    </md-list-item>
-    <md-list-item>
-      <button md-button (click)="startTask()">
+      <button md-button class="button-primary" (click)="startTask()">
         Start
       </button>
     </md-list-item>
+
+    <md-list-item>
+      <button md-button class="button-secondary" (click)="openSettings()">
+        Settings
+      </button>
+    </md-list-item>
+
+    <md-list-item>
+      <button md-button class="button-secondary" (click)="openAudio()">
+        Audio
+      </button>
+    </md-list-item>
+
     <md-list-item>
       <button md-button class="danger" (click)="exitApplication()">
         Exit

@@ -15,8 +15,9 @@ import { FinishComponent } from '../finish/finish.component';
 import { ReadyComponent } from '../ready/ready.component';
 import { BreakComponent } from '../break/break.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
+import { Visualiser } from '../../visualiser';
 
-const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
+const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
 
 const COLOR_COUNT: number = 16;
 const DIRECTIONS: Array<string> =  ['top', 'bottom', 'left', 'right'];
@@ -377,38 +378,4 @@ export class TaskComponent implements OnInit {
     }
   }
 
-}
-
-class Visualiser {
-
-  public analyser: AnalyserNode;
-  public data: Uint8Array;
-  private visualise: boolean;
-  public onvisualise: any;
-
-  constructor(public audioContext: AudioContext) {
-    this.analyser = audioContext.createAnalyser();
-    this.analyser.fftSize = 512;
-    this.data = new Uint8Array(512);
-    this.visualise = true;
-    this.onvisualise = null;
-  }
-
-  initialise() {
-
-  }
-  public start() {
-    this.visualise = true;
-    requestAnimationFrame(() => this.analyse());
-  }
-
-  public stop() {
-    this.visualise = false;
-  }
-
-  private analyse() {
-    this.analyser.getByteFrequencyData(this.data);
-    this.onvisualise && this.onvisualise(this.data);
-    this.visualise && requestAnimationFrame(() => this.analyse())
-  }
 }

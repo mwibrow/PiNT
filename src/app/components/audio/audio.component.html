@@ -1,0 +1,33 @@
+
+
+<div md-dialog-title class="header">
+  <span class="header-title">Audio</span>
+</div>
+<div md-dialog-content>
+  <div class="main">
+    <div class="setting">
+      <div class="setting-header">
+        <span class="title">Audio input</span>
+        <span class="horizontal-filler"></span>
+      </div>
+      <div class="setting-description">
+        <span class="description">Adjust the audio level using the operating system</span>
+      </div>
+      <div class="setting-value">
+        <div class="audio-meter audio-input-meter">
+          <div class="audio-meter-value" [ngStyle]="inputLevel">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div md-dialog-actions class="footer">
+  <span class="horizontal-filler"></span>
+  <div class="buttons">
+    <button md-button class="primary" (click)="finished()">
+      Finished
+    </button>
+  </div>
+</div>
+

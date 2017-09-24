@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 
+import { AudioComponent } from '../audio/audio.component';
 import { ErrorComponent } from '../error/error.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
@@ -53,6 +54,10 @@ export class HomeComponent implements OnInit {
         remote.getCurrentWindow().close();
       }
     });
+  }
+
+  openAudio() {
+    this.dialog.open(AudioComponent);
   }
 
 }
