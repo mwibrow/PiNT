@@ -5,15 +5,16 @@
 </div>
 <div md-dialog-content>
   <div class="main">
-    <div class="setting">
+    <div class="setting setting-audio">
       <div class="setting-header">
         <span class="title">Audio input</span>
         <span class="horizontal-filler"></span>
+        <span class="error-message">{{inputErrorMessage}}</span>
       </div>
-      <div class="setting-description">
-        <span class="description">Adjust the audio level using the operating system</span>
+      <div class="setting-description disabled-{{inputErrorMessage.length > 0}}">
+        <span class="description">Adjust the microphone level using the operating system</span>
       </div>
-      <div class="setting-value">
+      <div class="setting-value disabled-{{inputErrorMessage.length > 0}}">
         <div class="audio-meter audio-input-meter">
           <div class="audio-meter-value" [ngStyle]="inputLevel">
           </div>
@@ -26,7 +27,7 @@
   <span class="horizontal-filler"></span>
   <div class="buttons">
     <button md-button class="primary" (click)="finished()">
-      Finished
+      Back
     </button>
   </div>
 </div>

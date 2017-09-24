@@ -15,36 +15,40 @@ export class AudioComponent implements OnInit {
   inputVisualiser: Visualiser;
   outputVisualiser: Visualiser;
   inputLevel: any = {};
+  inputErrorMessage: string;
   constructor(private audio: AudioService, private dialogRef: MdDialogRef<AudioComponent>) {
+    this.inputErrorMessage = '';
     this.audio.initialise();
-    this.recorder = audio.recorder;
-    this.recorder.initialise();
+  }
 
-    this.recorder.clearNodes();
-    this.inputVisualiser = new Visualiser(this.audio.getContext());
-    this.inputVisualiser.frameRate = 2;
-    this.recorder.addNode(this.inputVisualiser.analyser);
-    // //
-    // this.inputVisualiser.onvisualise = (data) => {
-    //   console.log(data);
-    // }
-    // this.recorder.record();
-
+  initialise () {
+    this.recorder = this.audio.recorder;
+    this.recorder.initialise().then((arg) => {
+      this.recorder.clearNodes();
+      this.inputVisualiser = new Visualiser(this.audio.getContext());
+      this.inputVisualiser.frameRate = 2;
+      this.recorder.addNode(this.inputVisualiser.analyser);
+      this.inputVisualiser.onvisualise = (data) => {
+        this.inputLevel = {
+          width: `${Math.floor(data[0] / 255 * 20) * 5}%`
+        }
+      }
+      this.inputVisualiser.start();
+      this.recorder.monitorAudio();
+    }).catch((err) => {
+      this.inputErrorMessage = err.message || 'Unknown error. Please restart.'
+    })
   }
 
   ngOnInit() {
-    this.inputVisualiser.onvisualise = (data) => {
-      this.inputLevel = {
-        width: `${Math.floor(data[0] / 255 * 20) * 5}%`
-      }
-    }
-    this.inputVisualiser.start();
-    this.recorder.monitorAudio();
+    this.initialise();
   }
 
   finished() {
-    this.inputVisualiser.stop();
-    this.recorder.stop();
+    if (this.inputVisualiser) {
+      this.inputVisualiser.stop();
+      this.recorder.stop();
+    }
     this.dialogRef.close();
   }
 }

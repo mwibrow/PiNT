@@ -88,7 +88,9 @@ export class TaskComponent implements OnInit {
     this.recorder.initialise();
 
     this.visualiser = new Visualiser(this.audio.getContext());
+    this.recorder.clearNodes();
     this.recorder.addNode(this.visualiser.analyser);
+    this.recorder.monitor = false;
 
     this.keyboardBuffer = [];
     this.enableSpaceKey = false;
@@ -180,7 +182,7 @@ export class TaskComponent implements OnInit {
         this.enableSpaceKey = true;
         this.visualiser.onvisualise = (data) => {
           this.tiles[this.incomingTileIndex].visualiserStyle = {
-            width: `${(data[0] / 255) ** 2 * 255}px`
+            width: `${(Math.floor((data[0] / 255) * 15) + 1) * 16}px`
           }
         }
         this.visualiser.start()

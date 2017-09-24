@@ -31,15 +31,23 @@ html, body {
   color: color($md-palette, md-white)
 }
 
-
 .button-secondary {
   background-color: color($colors, secondary);
+  color: color($md-palette, md-white);
+}
+
+.button-tertiary {
+  background-color: color($md-palette, md-orange) !important;
   color: color($md-palette, md-white);
 }
 
 button:focus {
   border: none;
   outline: 0;
+}
+
+button:disabled {
+  opacity: 0.25;
 }
 
 .button-primary[disabled]  {
@@ -55,6 +63,10 @@ button:focus {
   color: $button-danger-color;
 }
 
+.error {
+  color:  $button-danger-background;
+  font-weight: bold;
+}
 $spinner-size: 50px;
 $spinner-time: 2s;
 $spinner-border: 10px;

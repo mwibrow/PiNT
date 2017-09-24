@@ -8,6 +8,7 @@
 $colors: (
     primary: color($md-palette, md-light-blue),
     secondary: color($md-palette, md-light-green),
+    tertiary: color($md-palette, md-orange),
     danger: color($md-palette, md-red)
 );
 
@@ -32,7 +33,7 @@ $button-primary-color: color($md-palette, md-white);
 $button-secondary-color: color($md-palette, md-white);
 $button-danger-color: color($md-palette, md-white);
 
-$dialog-background-color: rgba(color($md-palette, md-white), 0.9);
+$dialog-background-color: darken(color($md-palette, md-white), 10);
 $dialog-color: color($md-palette, md-black);
 
 $app-background: color($md-palette, md-black);
