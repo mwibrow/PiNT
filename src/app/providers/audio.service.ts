@@ -315,7 +315,6 @@ export class AudioRecorder extends AudioEventHandler {
     for (i = 0; i < this.nodes.length; i ++) {
       this.streamSource.connect(this.nodes[i]);
     }
-    console.log(this.nodes)
     this.emit('start');
   }
 
