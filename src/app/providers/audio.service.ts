@@ -65,7 +65,6 @@ const raise = (err, msg='') => {
     console.log(err);
 }
 
-
 const readWav = (filepath) => {
   return new Promise((resolve, reject) => {
     fs.readFile(filepath, (err, buffer) => {
@@ -76,7 +75,6 @@ const readWav = (filepath) => {
     });
   });
 };
-
 
 export class AudioPlayer extends AudioEventHandler {
 
