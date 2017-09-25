@@ -94,20 +94,34 @@ export class AudioPlayer extends AudioEventHandler {
   }
 
   initialise() {
-    if (this.initialised) return;
-    this.initialised = true;
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({audio: true, video: false})
-        .then((stream) => {
-           this.initialiseSuccess(stream)
-      })
-        .catch((err) => {
-          raise(err, 'Error occured while excuting getUserMedia');
+    return new Promise((resolve, reject) => {
+      if (this.initialised) {
+        resolve();
+      }
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({audio: true, video: false})
+          .then((stream) => {
+            this.initialiseSuccess(stream);
+            resolve();
         })
-    }
+          .catch((err) => {
+            this.initialised = false;
+            reject({
+              message: 'Unable to initailise audio',
+              error: err});
+          })
+      } else {
+        this.initialised = false;
+        reject({
+          message: 'Audio unsupported on this device',
+          error: null
+        });
+      }
+    });
   }
 
   initialiseSuccess(stream) {
+    this.initialised = true;
     this.emit('init');
   }
 
