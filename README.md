@@ -24,7 +24,11 @@ execute:
     ```
     npm run build
     ```
-5. After an even longer while **PiNT** can be run using:
+5. To run the `electron` command from the command line, execute:
+    ```
+    npm install -g electron
+    ```
+6. After an even longer while **PiNT** can be run using:
 
     ```
     electron ./dist
