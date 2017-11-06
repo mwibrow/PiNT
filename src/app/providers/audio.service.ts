@@ -341,6 +341,8 @@ export class AudioRecorder extends AudioEventHandler {
     this.running = false;
     this.timeout && clearTimeout(this.timeout);
     this.emit('stop');
+    this.scriptNode.disconnect();
+    this.streamSource.disconnect();
     if (!this.monitor) {
       return new Promise((resolve, reject) => {
         this.getAudioBuffers().then(resolve);
