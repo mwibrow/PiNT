@@ -121,7 +121,11 @@
 }
 
 
-
+.logo {
+  span {
+  font-family: 'Crafty Girls' !important;
+  }
+}
 
   .logo span:nth-of-type(1) {
     color: color($md-palette, 'md-red');

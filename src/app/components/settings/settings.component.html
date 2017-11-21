@@ -55,8 +55,10 @@
         <span class="horizontal-filler"></span>
         <div class="number-input-with-buttons">
           <input type="number" min="1" max="100" [(ngModel)]="settings.blockSize" (change)="changeBlockSize(0)">
-          <button class="plus" (click)="changeBlockSize(1)">+</button>
-          <button class="minus" (click)="changeBlockSize(-1)">-</button>
+          <div class="number-input-buttons">
+            <div class="number-button plus" (click)="changeBlockSize(1)"><div>+</div></div>
+            <div class="number-button minus" (click)="changeBlockSize(-1)"><div>-</div></div>
+          </div>
         </div>
       </div>
       <div class="setting-description">
@@ -70,8 +72,10 @@
         <span class="horizontal-filler"></span>
         <div class="number-input-with-buttons">
           <input type="number" min="1" max="10" [(ngModel)]="settings.responseLength" (change)="changeResponseLength(0)">
-          <button class="plus" (click)="changeResponseLength(1)">+</button>
-          <button class="minus" (click)="changeResponseLength(-1)">-</button>
+          <div class="number-input-buttons">
+            <div class="number-button plus" (click)="changeResponseLength(1)"><div>+</div></div>
+            <div class="number-button minus" (click)="changeResponseLength(-1)"><div>-</div></div>
+          </div>
         </div>
       </div>
       <div class="setting-description">
@@ -84,8 +88,10 @@
           <span class="horizontal-filler"></span>
           <div class="number-input-with-buttons">
             <input type="number" min="1" max="10" [(ngModel)]="settings.repetitions" (change)="changeRepetitions(0)">
-            <button class="plus" (click)="changeRepetitions(1)">+</button>
-            <button class="minus" (click)="changeRepetitions(-1)">-</button>
+            <div class="number-input-buttons">
+              <div class="number-button plus" (click)="changeRepetitions(1)"><div>+</div></div>
+              <div class="number-button minus" (click)="changeRepetitions(-1)"><div>-</div></div>
+            </div>
           </div>
         </div>
         <div class="setting-description">
