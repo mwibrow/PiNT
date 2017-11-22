@@ -5,7 +5,7 @@ import { ErrorComponent } from '../error/error.component';
 
 import { SettingsService, Settings, notSet } from '../../providers/settings.service';
 
-const {dialog} = require('electron').remote;
+const electronDialog = require('electron').remote.dialog;
 const fs = require('fs-extra');
 const klawSync = require('klaw-sync')
 const path = require('path');
@@ -20,8 +20,8 @@ const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
 export class SettingsComponent implements OnInit {
 
   public settings: Settings;
-  public stimuliPathValidationMessage: string ='';
-  public responsesPathValidationMessage: string ='';
+  public stimuliPathValidationMessage = '';
+  public responsesPathValidationMessage = '';
 
   constructor(
       private router: Router,
@@ -36,24 +36,23 @@ export class SettingsComponent implements OnInit {
   }
 
   changeStimuliPath() {
-    let path: any = dialog.showOpenDialog({
+    const pth: any = electronDialog.showOpenDialog({
       properties: ['openDirectory'],
       defaultPath: this.settings.stimuliPath
     });
-    if (path && path.length === 1) {
-      this.settings.stimuliPath = path[0];
+    if (pth && pth.length === 1) {
+      this.settings.stimuliPath = pth[0];
       this.validateStimuliPath();
-
     }
   }
 
   changeResponsesPath() {
-    let path: any = dialog.showOpenDialog({
+    const pth: any = electronDialog.showOpenDialog({
       properties: ['openDirectory'],
       defaultPath: this.settings.responsesPath
     });
-    if (path && path.length === 1) {
-      this.settings.responsesPath = path[0];
+    if (pth && pth.length === 1) {
+      this.settings.responsesPath = pth[0];
       this.validateResponsesPath();
     }
   }
@@ -87,29 +86,41 @@ export class SettingsComponent implements OnInit {
     if (by) {
       this.settings.blockSize += by;
     }
-    if (this.settings.blockSize < 1) this.settings.blockSize = 1;
-    if (this.settings.blockSize > 100) this.settings.blockSize = 100;
+    if (this.settings.blockSize < 1) {
+      this.settings.blockSize = 1;
+    }
+    if (this.settings.blockSize > 100) {
+      this.settings.blockSize = 100;
+    }
   }
 
   changeResponseLength(by: number) {
     if (by) {
       this.settings.responseLength += by;
     }
-    if (this.settings.responseLength < 1) this.settings.responseLength = 1;
-    if (this.settings.responseLength > 10) this.settings.responseLength = 10;
+    if (this.settings.responseLength < 1) {
+      this.settings.responseLength = 1;
+    }
+    if (this.settings.responseLength > 10) {
+      this.settings.responseLength = 10;
+    }
   }
 
   changeRepetitions(by: number) {
     if (by) {
       this.settings.repetitions += by;
     }
-    if (this.settings.repetitions < 1) this.settings.repetitions = 1;
-    if (this.settings.repetitions > 10) this.settings.repetitions = 10;
+    if (this.settings.repetitions < 1) {
+      this.settings.repetitions = 1;
+    }
+    if (this.settings.repetitions > 10) {
+      this.settings.repetitions = 10;
+    }
   }
 
 
   validateStimuliPath() {
-    if (!this.settings.stimuliPath || this.settings.stimuliPath == notSet) {
+    if (!this.settings.stimuliPath || this.settings.stimuliPath === notSet) {
       this.stimuliPathValidationMessage = 'Stimuli folder not set';
       return;
     }
@@ -117,7 +128,7 @@ export class SettingsComponent implements OnInit {
       this.stimuliPathValidationMessage = 'Stimuli folder does not exist';
       return;
     }
-    let stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
+    const stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
     if (stimuli.length === 0) {
       this.stimuliPathValidationMessage = 'No Images files in stimuli folder';
       return;
@@ -151,7 +162,7 @@ const validateSettings = (settings: any)  => {
     if (!fs.pathExistsSync(settings.stimuliPath)) {
       reject('Stimuli folder does not exist')
     }
-    let stimuli = klawSync(settings.stimuliPath, { filter: filterImg });
+    const stimuli = klawSync(settings.stimuliPath, { filter: filterImg });
     if (stimuli.length === 0) {
       reject('No image files in stimuli folder');
     }

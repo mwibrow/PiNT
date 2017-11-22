@@ -16,7 +16,7 @@ const remote = require('electron').remote;
 })
 export class HomeComponent implements OnInit {
   title = `App works !`;
-  settingsRejectionMessage: string = '';
+  settingsRejectionMessage = '';
   fade = 'fade-in';
   audioAvailable: Boolean;
   constructor(private router: Router,

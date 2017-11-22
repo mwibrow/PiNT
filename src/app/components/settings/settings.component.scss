@@ -141,65 +141,33 @@
     }
 
     button {
-      position: absolute;
-      margin: 0px !important;
+      //position: absolute;
+      margin: 0 0 1px !important;
       padding: 0px !important;
-      font-size: $font-size-normal;
-      width: 1em !important;
-      height: 1em !important;
-      line-height: 0.5em;
+      width: 0.7rem !important;
+      height: 0.7rem !important;
 
       display:flex;
       align-items: center;
       justify-content: center;
+      background-color: color($md-palette, md-orange);
+
+      .small {
+        font-weight: bold;
+        font-size: 0.75rem;
+      }
     }
     .number-input-buttons {
-      width: 1rem;
-      height: 2rem;
+      width: .7rem;
+      height: calc(1.4rem + 2px);
       display: flex;
       flex-direction: column;
       position: absolute;
-      top: -.25rem;
+      top:0;
       right: 0;
     }
-    .number-button {
-      background-color: color($md-palette, md-orange);
-      width: 0.9rem;
-      height: 0.9rem;
-      border-radius: 0.1rem;
-      display: flex;
-      flex-direction: center;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.25rem;
-      cursor: default;
-      position: relative;
-      div {
-        user-select: none;
-      }
-    }
-    .number-button:hover {
+    button:hover {
       background-color: darken(color($md-palette, md-orange), 10);
-    }
-    .plus {
-      top: 0;
-      right: 0;
-      display:flex;
-      align-items: center;
-      justify-content: center;
-      div {
-        transform: translateY(5%);
-      }
-    }
-    .minus {
-      bottom: 0;
-      right: 0;
-      display:flex;
-      align-items: center;
-      justify-content: center;
-      div {
-        transform: translateY(-2.5%);
-      }
     }
   }
 
