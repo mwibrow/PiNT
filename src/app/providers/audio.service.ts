@@ -8,13 +8,14 @@ import * as WavEncoder from 'wav-encoder';
 @Injectable()
 export class AudioService {
 
+  private static _context: AudioContext = new AudioContext();
+
   private context: AudioContext;
   public readonly player: AudioPlayer;
   public readonly recorder: AudioRecorder;
 
-
   constructor() {
-    this.context = new AudioContext();
+    this.context = this.getContext();
     this.player = new AudioPlayer(this.context);
     this.recorder = new AudioRecorder(this.context);
   }
@@ -25,7 +26,7 @@ export class AudioService {
   }
 
   getContext() {
-    return this.context;
+    return AudioService._context;
   }
 }
 
@@ -38,8 +39,8 @@ class AudioEventHandler {
     this.handlers = {};
   }
 
-  on(event: string, handler?:any) {
-    let handle: string = handler.toString();
+  on(event: string, handler?: any) {
+    const handle: string = handler.toString();
     if (!this.handlers.hasOwnProperty(event)) {
       this.handlers[event] = {};
     }
@@ -47,7 +48,7 @@ class AudioEventHandler {
     return this;
   }
 
-  emit(event: string, ...args:any[]) {
+  emit(event: string, ...args: any[]) {
     let handle: string;
     if (this.handlers.hasOwnProperty(event)) {
       for (handle in this.handlers[event]) {
@@ -60,7 +61,7 @@ class AudioEventHandler {
   }
 }
 
-const raise = (err, msg='') => {
+const raise = (err, msg = '') => {
     console.error(msg);
     console.log(err);
 }
@@ -132,7 +133,7 @@ export class AudioPlayer extends AudioEventHandler {
             audioData.numberOfChannels,
             audioData.length,
             audioData.sampleRate);
-          for (let i: number = 0; i < audioData.numberOfChannels; i ++) {
+          for (let i = 0; i < audioData.numberOfChannels; i ++) {
             this.buffer.copyToChannel(audioData.channelData[i], 0);
           }
           this.emit('load');
@@ -183,7 +184,7 @@ export class AudioPlayer extends AudioEventHandler {
     });
   }
 
-  playTone(frequency: number, duration: number, amplitude=Math.SQRT1_2, numberOfChannels=1, sampleRate=44100, rampLength=0.050) {
+  playTone(frequency: number, duration: number, amplitude = Math.SQRT1_2, numberOfChannels = 1, sampleRate = 44100, rampLength = 0.050) {
     let length: number, buffer: AudioBuffer, i: number, omega: number, samples: Array<number>;
     length = Math.floor(duration * sampleRate);
     buffer = this.context.createBuffer(numberOfChannels, length, sampleRate);
@@ -215,7 +216,7 @@ export class AudioPlayer extends AudioEventHandler {
   }
 }
 
-const WORKER_PATH: string = 'assets/js/audioWorker.js';
+const WORKER_PATH = 'assets/js/audioWorker.js';
 
 export class AudioRecorder extends AudioEventHandler {
 
@@ -333,13 +334,15 @@ export class AudioRecorder extends AudioEventHandler {
   record(timeout?: number) {
     this.recordInit();
     if (timeout) {
-      this.timeout = setTimeout(()=> this.stop(), timeout * 1000);
+      this.timeout = setTimeout(() => this.stop(), timeout * 1000);
     }
   }
 
   stop() {
     this.running = false;
-    this.timeout && clearTimeout(this.timeout);
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
     this.emit('stop');
     this.scriptNode.disconnect();
     this.streamSource.disconnect();
@@ -354,20 +357,20 @@ export class AudioRecorder extends AudioEventHandler {
     this.worker.terminate();
   }
 
-  clear(){
+  clear() {
     this.onMessage = null;
     this.worker.postMessage({ command: 'clear' });
   }
 
   private getAudioBuffers() {
-    let self: any = this;
+    const self: any = this;
     return new Promise((resolve, reject) => {
       const setRecordBuffer = (buffer) => {
         self.recordBuffer = self.context.createBuffer(
           buffer.length,
           buffer[0].length,
           self.context.sampleRate);
-        for (let i: number = 0; i < buffer.length; i ++) {
+        for (let i = 0; i < buffer.length; i ++) {
           self.recordBuffer.copyToChannel(buffer[i], i, 0);
         }
         self.worker.terminate();
@@ -394,11 +397,15 @@ export class AudioRecorder extends AudioEventHandler {
   }
 
   private processMessage(message) {
-    this.onMessage && this.onMessage(message.data);
+    if (this.onMessage) {
+      this.onMessage(message.data);
+    }
   }
 
   private processAudio(event) {
-    if (!this.running || this.monitor) return;
+    if (!this.running || this.monitor) {
+      return;
+    }
     this.worker.postMessage({
       command: 'record',
       buffer: [
@@ -409,12 +416,12 @@ export class AudioRecorder extends AudioEventHandler {
 
   saveWav(wavFile: string) {
     return new Promise((resolve, reject) => {
-      let channelData: Array<Float32Array> = new Array<Float32Array>();
-      for (let i: number = 0; i < this.recordBuffer.numberOfChannels; i ++) {
+      const channelData: Array<Float32Array> = new Array<Float32Array>();
+      for (let i = 0; i < this.recordBuffer.numberOfChannels; i ++) {
         channelData.push(new Float32Array(this.recordBuffer.length));
         this.recordBuffer.copyFromChannel(channelData[i], i, 0);
       }
-      let audioData: any = {
+      const audioData: any = {
         sampleRate: this.context.sampleRate,
         channelData: channelData
       }
@@ -427,8 +434,9 @@ export class AudioRecorder extends AudioEventHandler {
   }
 }
 
+/* tslint:disable */
 const getAudioWorker = () => {
-  let self: any = {};
+  const self: any = {};
   let worker: Worker = new InlineWorker(function(self){
 //
 // Begin worker code...
