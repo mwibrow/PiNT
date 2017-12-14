@@ -7,10 +7,9 @@ import { SettingsService, Settings, notSet } from '../../providers/settings.serv
 
 const electronDialog = require('electron').remote.dialog;
 const fs = require('fs-extra');
-const klawSync = require('klaw-sync')
 const path = require('path');
 
-const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
+const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item))
 
 @Component({
   selector: 'app-settings',
@@ -128,7 +127,7 @@ export class SettingsComponent implements OnInit {
       this.stimuliPathValidationMessage = 'Stimuli folder does not exist';
       return;
     }
-    const stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
+    const stimuli = fs.readdirSync(this.settings.stimuliPath).filter(filterImg);
     if (stimuli.length === 0) {
       this.stimuliPathValidationMessage = 'No Images files in stimuli folder';
       return;
@@ -162,7 +161,7 @@ const validateSettings = (settings: any)  => {
     if (!fs.pathExistsSync(settings.stimuliPath)) {
       reject('Stimuli folder does not exist')
     }
-    const stimuli = klawSync(settings.stimuliPath, { filter: filterImg });
+    const stimuli = fs.readdirSync(this.settings.stimuliPath).filter(filterImg);
     if (stimuli.length === 0) {
       reject('No image files in stimuli folder');
     }

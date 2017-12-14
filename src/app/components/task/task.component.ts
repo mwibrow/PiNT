@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { AudioService, AudioPlayer, AudioRecorder } from '../../providers/audio.service';
 import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
 const fs = require('fs-extra');
-const klawSync = require('klaw-sync');
 const path = require('path');
 const sprintf = require ('sprintf-js');
 const storage = require('electron-json-storage');
-var _ = require('lodash');
+const _ = require('lodash');
 
 import { ErrorComponent } from '../error/error.component';
 import { FinishComponent } from '../finish/finish.component';
@@ -17,13 +16,12 @@ import { BreakComponent } from '../break/break.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
 import { Visualiser } from '../../visualiser';
 
-const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
+const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item))
 
-const COLOR_COUNT: number = 16;
+const COLOR_COUNT = 16;
 const DIRECTIONS: Array<string> =  ['top', 'bottom', 'left', 'right'];
-const STYLE_OUT: string = 'out';
-const STYLE_IN: string = 'in';
-
+const STYLE_OUT = 'out';
+const STYLE_IN = 'in';
 
 class Tile {
   constructor(
@@ -35,16 +33,10 @@ class Tile {
     public visualiserStyle: any) {};
 }
 
-
-
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
   styleUrls: ['./task.component.scss'],
-  host: {
-    '(document:keydown)': 'handleKeyboardEvents($event)',
-    '(document:keyup)': 'handleKeyboardEvents($event)'
-  }
 })
 export class TaskComponent implements OnInit {
 
@@ -120,7 +112,9 @@ export class TaskComponent implements OnInit {
   private loadStimuli() {
     return new Promise((resolve, reject) => {
       console.log(`Loading image file paths from ${this.settings.stimuliPath}`);
-      this.stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
+      this.stimuli = fs.readdirSync(this.settings.stimuliPath)
+        .filter(filterImg)
+        .map(wav => path.join(this.settings.stimuliPath, wav));
       if (this.stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
@@ -142,7 +136,7 @@ export class TaskComponent implements OnInit {
   }
 
   private runTask() {
-    let now = new Date();
+    const now = new Date();
     this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d-%02d',
       now.getFullYear(),
       now.getMonth() + 1,
@@ -150,7 +144,7 @@ export class TaskComponent implements OnInit {
       now.getHours(),
       now.getMinutes(),
       now.getSeconds());
-    let participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
+    const participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
     fs.mkdirpSync(participantPath,
       (err) => {
         console.error(`Could not create folder '${participantPath}'`)
@@ -182,7 +176,7 @@ export class TaskComponent implements OnInit {
     let i: number;
     return new Promise((resolve, reject) => {
       i = this.trial % this.stimuli.length;
-      this.updateTiles(this.stimuli[i].path);
+      this.updateTiles(this.stimuli[i]);
       setTimeout(() => {
         this.enableSpaceKey = true;
         this.visualiser.onvisualise = (data) => {
@@ -198,7 +192,7 @@ export class TaskComponent implements OnInit {
 
   private recordResponse()  {
     return new Promise((resolve, reject) => {
-      let timeoutId = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         this.onSpaceKey = null;
         this.enableSpaceKey = false;
         resolve()
@@ -221,7 +215,7 @@ export class TaskComponent implements OnInit {
       this.visualiser.onvisualise = null;
       this.tiles[this.incomingTileIndex].visualiserStyle = {width: '0px'}
       this.recorder.stop().then(() => {
-        let wavPath: string = this.getResponseFile();
+        const wavPath: string = this.getResponseFile();
         console.log(`Saving wav to ${wavPath}`);
         this.recorder.saveWav(wavPath).then(() => resolve());
       });
@@ -230,12 +224,12 @@ export class TaskComponent implements OnInit {
 
   private getResponseFile() {
     let i: number;
-    let isWindows: boolean = path.sep === '//';
-    let pathApi = isWindows ? path.win32 : path;
+    const isWindows: boolean = path.sep === '//';
+    const pathApi = isWindows ? path.win32 : path;
     i = this.trial % this.stimuli.length;
     return path.normalize(path.join(
       this.settings.responsesPath, this.participantFolder,
-      `${sprintf.sprintf('%03d', this.trial + 1)}-${pathApi.basename(this.stimuli[i].path, pathApi.extname(this.stimuli[i].path))}.wav`
+      `${sprintf.sprintf('%03d', this.trial + 1)}-${pathApi.basename(this.stimuli[i], pathApi.extname(this.stimuli[i]))}.wav`
     ));
   }
 
@@ -259,8 +253,8 @@ export class TaskComponent implements OnInit {
 
   private updateTiles(imageSrc?: string) {
     let newColor: number;
-    let i = this.trial % this.stimuli.length;
-    let outgoingTileIndex: number = this.incomingTileIndex;
+    const i = this.trial % this.stimuli.length;
+    const outgoingTileIndex: number = this.incomingTileIndex;
     this.incomingTileIndex = 1 - this.incomingTileIndex;
 
     if (imageSrc) {
@@ -276,7 +270,7 @@ export class TaskComponent implements OnInit {
         this.tiles[this.incomingTileIndex].imageSrc = buffer.toString('base64')
         this.tiles[this.incomingTileIndex].style = STYLE_IN;
         this.tiles[outgoingTileIndex].style = STYLE_OUT;
-        let directions = _.sampleSize(DIRECTIONS, 2);
+        const directions = _.sampleSize(DIRECTIONS, 2);
         this.tiles[this.incomingTileIndex].direction = directions[0];
         this.tiles[outgoingTileIndex].direction = directions[1];
         setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
@@ -285,7 +279,7 @@ export class TaskComponent implements OnInit {
       this.tiles[this.incomingTileIndex].imageSrc = null;
       this.tiles[this.incomingTileIndex].style = STYLE_IN;
       this.tiles[outgoingTileIndex].style = STYLE_OUT;
-      let directions = _.sampleSize(DIRECTIONS, 2);
+      const directions = _.sampleSize(DIRECTIONS, 2);
       this.tiles[this.incomingTileIndex].direction = directions[0];
       this.tiles[outgoingTileIndex].direction = directions[1];
       setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
@@ -317,8 +311,18 @@ export class TaskComponent implements OnInit {
     });
   }
 
+  @HostListener('document:keydown', ['$event'])
+  keydown(event: KeyboardEvent) {
+    this.handleKeyboardEvents(event);
+  }
+
+  @HostListener('document:keyup', ['$event'])
+  keyup(event: KeyboardEvent) {
+    this.handleKeyboardEvents(event);
+  }
+
   handleKeyboardEvents(event: KeyboardEvent) {
-    let key = event.which || event.keyCode;
+    const key = event.which || event.keyCode;
     switch (event.type) {
       case 'keydown':
         if (event.keyCode === 32 && this.enableSpaceKey && this.onSpaceKey) {
@@ -354,7 +358,9 @@ export class TaskComponent implements OnInit {
   }
 
   openDialog(id: string, target: any, options: any, afterClose: any) {
-    if (this.abort || this.finish) return;
+    if (this.abort || this.finish) {
+      return
+    }
     if (this.dialogRefs.hasOwnProperty(id)) {
       this.dialogRefs[id].close();
     }
@@ -369,14 +375,14 @@ export class TaskComponent implements OnInit {
     });
   }
 
-  closeDialog(id?: string) {
-    if (id) {
-      if (this.dialogRefs.hasOwnProperty(id)) {
-        this.dialogRefs[id].close();
-        delete this.dialogRefs[id];
+  closeDialog(dialogId?: string) {
+    if (dialogId) {
+      if (this.dialogRefs.hasOwnProperty(dialogId)) {
+        this.dialogRefs[dialogId].close();
+        delete this.dialogRefs[dialogId];
       }
     } else {
-      for (let id in this.dialogRefs) {
+      for (const id in this.dialogRefs) {
           if (this.dialogRefs.hasOwnProperty(id)) {
           this.dialogRefs[id].close();
           delete this.dialogRefs[id];
