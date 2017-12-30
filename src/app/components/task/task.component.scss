@@ -47,6 +47,9 @@ $color-list:(
     .color-dark-#{$i} {
         background-color: darken(color($md-palette, md-#{$c}), 5);
     }
+    .color-darker-#{$i} {
+        background-color: darken(color($md-palette, md-#{$c}), 10);
+    }
 }
 
 
@@ -152,8 +155,8 @@ $animation-duration: 2s;
 }
 
 img {
-    width: 512px;
-    height: 512px;
+    width: 65vh;
+    height: 65vh;
 }
 
 img[src=""] {

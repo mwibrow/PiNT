@@ -175,7 +175,7 @@ function getPlugins() {
 }
 
 module.exports = {
-  "devtool": "source-map",
+  "devtool": "eval",
   "externals": {
     "electron": "require('electron')",
     "electron-json-storage": "require('electron-json-storage')",
