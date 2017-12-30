@@ -40,7 +40,7 @@ execute:
 for the picture
 
 Use the settings to set the source folder for the pictures
-and the destibatio folder for the recordings.
+and the destination folder for the recordings.
 The pictures should be square and of a reasonably high resolution,
 (e.g., `512px x 512px`)
 Recordings will be saved
