@@ -36,10 +36,15 @@ execute:
 
 ## Using PiNT
 
+*PiNT* displays pictures and records a partipant's spoken 'name'
+for the picture
+
 Use the settings to set the source folder for the pictures
-and the destination folder for the recordings on the Settings.
+and the destibatio folder for the recordings.
+The pictures should be square and of a reasonably high resolution,
+(e.g., `512px x 512px`)
 Recordings will be saved
-inside timestamped folders inside the destination folder.
+inside time-stamped folders inside the destination folder.
 
 In general, it is advisable set up the microphone prior to
 running **PiNT**.
